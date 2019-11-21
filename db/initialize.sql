@@ -1,0 +1,5 @@
+DROP DATABASE REDDIT;
+CREATE DATABASE reddit;
+GRANT ALL ON DATABASE reddit TO reddit;
+
+-- CREATE USER reddit WITH PASSWORD 'redditpass';
