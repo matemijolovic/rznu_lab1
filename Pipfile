@@ -9,6 +9,9 @@ verify_ssl = true
 flask = "*"
 flask-sqlalchemy = "*"
 psycopg2 = "*"
+flask-login = "*"
+wtforms = "*"
+flask-bcrypt = "*"
 
 [requires]
 python_version = "3.7"
