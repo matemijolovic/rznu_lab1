@@ -1,1 +1,1 @@
-docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=superuser --name reddit-postgres postgres
+docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=superuser --name reddit-postgres postgres:11
