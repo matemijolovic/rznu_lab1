@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ subreddit.title }}{% endblock %}
+{% block content %}
+    <div class="container">
+        <h2 class="display-4">{{ subreddit.title }}</h2>
+        <p>Started by user {{ subreddit.user.name }}</p>
+    </div>
+{% endblock %}

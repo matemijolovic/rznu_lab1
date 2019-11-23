@@ -1,0 +1,28 @@
+html, body {
+    height: 100%;
+}
+
+body {
+    padding-top: 56px;
+}
+
+.form-signin {
+    text-align: center;
+    width: 100%;
+    max-width: 330px;
+    margin: 0 auto;
+}
+
+.form-control {
+  position: relative;
+  box-sizing: border-box;
+  height: auto;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}

@@ -2,7 +2,6 @@
 
 {% block content %}
     <div class="d-flex align-items-center h-100">
-        <div class="container">
             <form method=post class="form-signin">
                 {% for message in get_flashed_messages() %}
                     <div class="alert alert-warning">
@@ -10,8 +9,17 @@
                         {{ message }}
                     </div>
                 {% endfor %}
-                <h1>Log In</h1>
-                <div class="email pb-2">
+                <h1>New user registration</h1>
+                <div class="name pb-2 pt-2">
+                    {{ form.name(placeholder='Name', class='form-control') }}
+                    {% if form.name.errors %}
+                        <ul class="errors">
+                            {% for error in form.name.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>                <div class="email pb-2">
                     {{ form.email(placeholder='Email', class='form-control') }}
                     {% if form.email.errors %}
                         <ul class="errors">
@@ -31,12 +39,8 @@
                     {% endif %}
                 </div>
                 <div class="submitbutton">
-                    <button class="btn btn-lg btn-primary btn-block" id="submit" type="submit">Log in</button>
-                </div>
-                <div class="loginsignup" style="padding-top:20px">
-                    <span>Don't have an account? <a href="{{ url_for('authentication.register') }}">Sign up.</a></span>
+                    <button class="btn btn-lg btn-primary btn-block" id="submit" type="submit">Register!</button>
                 </div>
             </form>
-        </div>
     </div>
 {% endblock %}
