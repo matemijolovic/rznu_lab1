@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, g, session
-from flask_login import login_user, current_user, login_required, logout_user
+from flask_login import login_user, current_user, logout_user
 
 from reddit.database import db
 from reddit.forms import LoginForm, RegisterForm

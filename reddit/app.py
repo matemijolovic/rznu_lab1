@@ -1,6 +1,6 @@
 import os
 
-from flask import render_template, Flask
+from flask import Flask
 
 from reddit.models import User, Subreddit, Post, Comment
 from reddit.security import login_manager, bcrypt
