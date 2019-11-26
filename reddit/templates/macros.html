@@ -14,9 +14,6 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/subreddits">Subreddits</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/users">Users</a>
-                    </li>
                 {% else %}
                     <li class="nav-item">
                         <a class="nav-link" href="/login">Login</a>
@@ -42,11 +39,24 @@
 {% endmacro %}
 
 {% macro list_subreddits(subreddits) %}
-    <div class="jumbotron" style="padding: 20px">
+    <div class="jumbotron" style="padding: 20px; margin-bottom: 10px">
         {% for subreddit in subreddits %}
             <h3 class="display-7">
                 <a href="/subreddits/{{ subreddit.id }}">{{ subreddit.title }}</a> (started by user {{ subreddit.user.name }})</h3>
         {% endfor %}
+    </div>
+{% endmacro %}
 
+{% macro list_posts(subreddit) %}
+    <div class="jumbotron" style="padding: 20px; margin-bottom: 10px">
+        {% if not subreddit.posts %}
+            No posts
+{##}
+        {% else %}
+            {% for post in subreddit.posts %}
+                <h3 class="display-7">
+                    <a href="/subreddits/{{ subreddit.id }}/posts/{{ post.id }}">{{ post.title }}</a> (started by user {{ post.user.name }})</h3>
+            {% endfor %}
+        {% endif %}
     </div>
 {% endmacro %}

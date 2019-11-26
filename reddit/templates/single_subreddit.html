@@ -1,9 +1,45 @@
 {% extends "layout.html" %}
+{% from "macros.html" import list_posts %}
 
 {% block title %}{{ subreddit.title }}{% endblock %}
 {% block content %}
     <div class="container">
-        <h2 class="display-4">{{ subreddit.title }}</h2>
-        <p>Started by user {{ subreddit.user.name }}</p>
+        <h2 class="display-4 pt-4">{{ subreddit.title }}</h2>
+        <h5 class="display-6">Description: {{ subreddit.description }}</h5>
+        <p class="text-secondary">Started by user {{ subreddit.user.name }}</p>
+
+        {{ list_posts(subreddit) }}
+
+        <form method=post class="form-create-new-post mt-3">
+            {% for message in get_flashed_messages() %}
+                <div class="alert alert-warning">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+            <h1>Create new post</h1>
+            <div class="title pb-2">
+                {{ form.title(placeholder='Title', class='form-control') }}
+                {% if form.title.errors %}
+                    <ul class="errors">
+                        {% for error in form.title.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            <div class="content pb-2">
+                {{ form.content(placeholder='Content', class='form-control') }}
+                {% if form.content.errors %}
+                    <ul class="errors">
+                        {% for error in form.content.errors %}
+                            <li>{{ error }}</li>{% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            <div class="submitbutton">
+                <button class="btn btn-lg btn-primary" id="submit" type="submit">Create new post</button>
+            </div>
+        </form>
     </div>
 {% endblock %}

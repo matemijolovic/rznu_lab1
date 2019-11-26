@@ -1,5 +1,6 @@
 from wtforms import Form, StringField, SubmitField, PasswordField
 from wtforms.validators import DataRequired
+from wtforms.widgets import TextArea
 
 
 class LoginForm(Form):
@@ -14,3 +15,15 @@ class RegisterForm(Form):
     password = PasswordField('Password', validators=[DataRequired('Enter your desired password')])
 
     submit = SubmitField('Register')
+
+
+class SubredditForm(Form):
+    title = StringField('Title', validators=[DataRequired('Please enter subreddit title')])
+    description = StringField('Description', validators=[DataRequired('Please enter subreddit description')], widget=TextArea())
+    submit = SubmitField('Create new subreddit')
+
+
+class PostForm(Form):
+    title = StringField('Title', validators=[DataRequired('Please enter post title')])
+    content = StringField('Content', validators=[DataRequired('Please enter post content')], widget=TextArea())
+    submit = SubmitField('Create new post')

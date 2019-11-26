@@ -38,7 +38,7 @@ class Subreddit(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, ForeignKey('user.id'))
     user = db.relationship('User', foreign_keys=user_id)
-    title = db.Column(db.String(128), nullable=False, unique=True)
+    title = db.Column(db.String(128), nullable=False)
     description = db.Column(db.String(256))
     posts = relationship('Post')
 
@@ -47,7 +47,8 @@ class Post(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, ForeignKey('user.id'))
-    title = db.Column(db.String(128), nullable=False, unique=True)
+    user = db.relationship('User', foreign_keys=user_id)
+    title = db.Column(db.String(128), nullable=False)
     content = db.Column(db.String(2048))
     subreddit_id = db.Column(db.Integer, ForeignKey('subreddit.id'))
 

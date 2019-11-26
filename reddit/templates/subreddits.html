@@ -4,7 +4,39 @@
 {% block title %}Subreddits{% endblock %}
 {% block content %}
     <div class="container">
-        <h2 class="display-4">All subreddits</h2>
+        <h2 class="display-4 pt-4">All subreddits</h2>
         {{ list_subreddits(subreddits) }}
+
+        <form method=post class="form-create-new-subreddit mt-3">
+                {% for message in get_flashed_messages() %}
+                    <div class="alert alert-warning">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+                <h1>Create new subreddit</h1>
+                <div class="title pb-2">
+                    {{ form.title(placeholder='Title', class='form-control') }}
+                    {% if form.title.errors %}
+                        <ul class="errors">
+                            {% for error in form.title.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="description pb-2">
+                    {{ form.description(placeholder='Description', class='form-control') }}
+                    {% if form.description.errors %}
+                        <ul class="errors">
+                            {% for error in form.description.errors %}
+                                <li>{{ error }}</li>{% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="submitbutton">
+                    <button class="btn btn-lg btn-primary" id="submit" type="submit">Create new subreddit</button>
+                </div>
+            </form>
     </div>
 {% endblock %}
