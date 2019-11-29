@@ -42,7 +42,11 @@
     <div class="jumbotron" style="padding: 20px; margin-bottom: 10px">
         {% for subreddit in subreddits %}
             <h3 class="display-7">
-                <a href="/subreddits/{{ subreddit.id }}">{{ subreddit.title }}</a> (started by user {{ subreddit.user.name }})</h3>
+                <a href="/subreddits/{{ subreddit.id }}">{{ subreddit.title }}</a> (started by user {{ subreddit.user.name }})
+            </h3>
+{#            <form action="{{ url_for('delete_movie', movie_name=movie.name) }}" method=post>#}
+{#                <input type=submit value=Delete">#}
+{#            </form>#}
         {% endfor %}
     </div>
 {% endmacro %}
@@ -51,7 +55,6 @@
     <div class="jumbotron" style="padding: 20px; margin-bottom: 10px">
         {% if not subreddit.posts %}
             No posts
-{##}
         {% else %}
             {% for post in subreddit.posts %}
                 <h3 class="display-7">
@@ -59,4 +62,17 @@
             {% endfor %}
         {% endif %}
     </div>
+{% endmacro %}
+
+{% macro list_comments(post) %}
+    {% if not post.comments %}
+        No comments yet.
+    {% else %}
+        {% for comment in post.comments %}
+            <div class="jumbotron" style="padding: 20px; margin-bottom: 10px">
+                <div class="text-secondary">{{ comment.user.name }}</div>
+                {{ comment.content }}
+            </div>
+        {% endfor %}
+    {% endif %}
 {% endmacro %}

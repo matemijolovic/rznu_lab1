@@ -51,6 +51,7 @@ class Post(db.Model):
     title = db.Column(db.String(128), nullable=False)
     content = db.Column(db.String(2048))
     subreddit_id = db.Column(db.Integer, ForeignKey('subreddit.id'))
+    comments = relationship('Comment')
 
 
 class Comment(db.Model):
@@ -59,3 +60,4 @@ class Comment(db.Model):
     content = db.Column(db.String(2048))
     user_id = db.Column(db.Integer, ForeignKey('user.id'))
     post_id = db.Column(db.Integer, ForeignKey('post.id'))
+    user = relationship('User')

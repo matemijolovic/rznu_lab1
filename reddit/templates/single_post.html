@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+{% from "macros.html" import list_comments %}
+
+{% block title %}{{ post.title }}{% endblock %}
+{% block content %}
+    <div class="container">
+        <h2 class="display-4 pt-4">{{ post.title }}</h2>
+        <p class="text-secondary">Posted by user {{ post.user.name }}</p>
+        <div class="jumbotron">
+            {{ post.content }}
+        </div>
+
+        <h3 class="display-6 mt-4">Comments</h3>
+        {{ list_comments(post) }}
+
+        <form method=post
+              class="form-create-new-comment mt-4"
+              action="/subreddits/{{ post.subreddit_id }}/posts/{{ post.id }}/comments">
+
+            {% for message in get_flashed_messages() %}
+                <div class="alert alert-warning">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+            <h1>Add new comment</h1>
+            <div class="content pb-2">
+                {{ form.content(placeholder='Content', class='form-control') }}
+                {% if form.content.errors %}
+                    <ul class="errors">
+                        {% for error in form.content.errors %}
+                            <li>{{ error }}</li>{% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            <div class="submitbutton">
+                <button class="btn btn-lg btn-primary" id="submit" type="submit">Submit comment</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

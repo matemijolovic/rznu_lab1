@@ -27,3 +27,8 @@ class PostForm(Form):
     title = StringField('Title', validators=[DataRequired('Please enter post title')])
     content = StringField('Content', validators=[DataRequired('Please enter post content')], widget=TextArea())
     submit = SubmitField('Create new post')
+
+
+class CommentForm(Form):
+    content = StringField('Content', validators=[DataRequired('Please enter comment content')], widget=TextArea())
+    submit = SubmitField('Submit comment')
