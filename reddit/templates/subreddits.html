@@ -5,7 +5,7 @@
 {% block content %}
     <div class="container">
         <h2 class="display-4 pt-4">All subreddits</h2>
-        {{ list_subreddits(subreddits) }}
+{#        {{ list_subreddits(subreddits) }}#}
 
         <form method=post class="form-create-new-subreddit mt-3">
                 {% for message in get_flashed_messages() %}

@@ -40,7 +40,7 @@ class Subreddit(db.Model):
     user = db.relationship('User', foreign_keys=user_id)
     title = db.Column(db.String(128), nullable=False)
     description = db.Column(db.String(256))
-    posts = relationship('Post')
+    posts = relationship('Post', passive_deletes=True, backref='subreddit')
 
 
 class Post(db.Model):
@@ -50,8 +50,8 @@ class Post(db.Model):
     user = db.relationship('User', foreign_keys=user_id)
     title = db.Column(db.String(128), nullable=False)
     content = db.Column(db.String(2048))
-    subreddit_id = db.Column(db.Integer, ForeignKey('subreddit.id'))
-    comments = relationship('Comment')
+    subreddit_id = db.Column(db.Integer, ForeignKey('subreddit.id', ondelete='CASCADE'))
+    comments = relationship('Comment', passive_deletes=True, backref='post')
 
 
 class Comment(db.Model):
@@ -59,5 +59,5 @@ class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     content = db.Column(db.String(2048))
     user_id = db.Column(db.Integer, ForeignKey('user.id'))
-    post_id = db.Column(db.Integer, ForeignKey('post.id'))
+    post_id = db.Column(db.Integer, ForeignKey('post.id', ondelete='CASCADE'))
     user = relationship('User')

@@ -8,7 +8,7 @@ from reddit.models import Subreddit, Post, Comment
 subreddits = Blueprint('subreddits', __name__)
 
 
-@subreddits.route('/', methods=['GET', 'POST'])
+@subreddits.route('', methods=['GET', 'POST'])
 @login_required
 def subreddits_root():
     subreddits = Subreddit.query.all()
@@ -36,8 +36,10 @@ def subreddit(subreddit_id):
         abort(404)
 
     if request.method == 'DELETE':
+        check_permission(subreddit)
         Subreddit.query.filter_by(id=subreddit_id).delete()
-        return redirect(url_for('subreddits_root'))
+        db.session.commit()
+        return redirect(url_for('subreddits.subreddits_root'))
     form = PostForm(request.form)
     return render_template('single_subreddit.html', form=form, subreddit=subreddit)
 
@@ -64,10 +66,15 @@ def subreddit_posts(subreddit_id):
     return render_template('single_subreddit.html', form=form, subreddit=subreddit)
 
 
-@subreddits.route('/<subreddit_id>/posts/<post_id>', methods=['GET']) # todo delete
+@subreddits.route('/<subreddit_id>/posts/<post_id>', methods=['GET', 'DELETE'])
 @login_required
 def subreddit_post(subreddit_id, post_id):
     post = find_post(subreddit_id, post_id)
+    if request.method == 'DELETE':
+        check_permission(post)
+        Post.query.filter_by(id=post.id).delete()
+        db.session.commit()
+        return redirect(url_for('subreddits.subreddit', subreddit_id=subreddit_id))
 
     form = CommentForm(request.form)
     return render_template('single_post.html', post=post, form=form)
@@ -90,6 +97,19 @@ def subreddit_post_comments(subreddit_id, post_id):
     return redirect(url_for('subreddits.subreddit_post', subreddit_id=subreddit_id, post_id=post_id))
 
 
+@subreddits.route('/<subreddit_id>/posts/<post_id>/comments/<comment_id>', methods=['DELETE'])
+@login_required
+def subreddit_post_delete_comment(subreddit_id, post_id, comment_id):
+    post = find_post(subreddit_id, post_id)
+    comment = find_comment(comment_id, post)
+
+    check_permission(comment)
+
+    Comment.query.filter_by(id=comment.id).delete()
+    db.session.commit()
+    return redirect(url_for('subreddits.subreddit_post', subreddit_id=subreddit_id, post_id=post_id))
+
+
 def find_post(subreddit_id, post_id):
     subreddit = Subreddit.query.filter_by(id=subreddit_id).first()
     if subreddit is None:
@@ -98,3 +118,18 @@ def find_post(subreddit_id, post_id):
         return next(filter(lambda post: post.id == int(post_id), subreddit.posts))
     except StopIteration:
         abort(404)
+
+
+def find_comment(comment_id, post):
+    if post is None:
+        abort(404)
+
+    try:
+        return next(filter(lambda comment: comment.id == int(comment_id), post.comments))
+    except StopIteration:
+        abort(404)
+
+
+def check_permission(comment):
+    if comment.user_id != current_user.id:
+        abort(403)

@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask
+from flask import Flask, request, abort
 
 from reddit.models import User, Subreddit, Post, Comment
 from reddit.security import login_manager, bcrypt
@@ -70,6 +70,19 @@ def add_default_post_comments(user, posts):
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.filter_by(email=user_id).first()
+
+
+@login_manager.request_loader
+def login_with_basic_auth(request):
+    auth = request.authorization
+    if not auth:
+        return
+
+    user = User.query.filter_by(email=auth.username).first()
+    if not user or not user.check_password(auth.password):
+        abort(401)
+
+    return user
 
 
 app = create_app()
