@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, request, abort
+from flask import Flask, request, abort, render_template
 
 from reddit.models import User, Subreddit, Post, Comment
 from reddit.security import login_manager, bcrypt
@@ -86,6 +86,12 @@ def login_with_basic_auth(request):
 
 
 app = create_app()
+
+
+@app.route('/documentation')
+def get_docs():
+    return render_template('documentation.html')
+
 
 if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
     # to prevent flask issues with double initialization in debug mode

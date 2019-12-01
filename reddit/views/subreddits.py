@@ -28,9 +28,10 @@ def subreddits_root():
     return render_template('subreddits.html', form=form, subreddits=subreddits)
 
 
-@subreddits.route('/<subreddit_id>', methods=['GET', 'DELETE'])
+@subreddits.route('/<subreddit_id>', methods=['GET', 'POST', 'DELETE'])
 @login_required
 def subreddit(subreddit_id):
+
     subreddit = Subreddit.query.filter_by(id=subreddit_id).first()
     if subreddit is None:
         abort(404)
@@ -40,17 +41,34 @@ def subreddit(subreddit_id):
         Subreddit.query.filter_by(id=subreddit_id).delete()
         db.session.commit()
         return redirect(url_for('subreddits.subreddits_root'))
+    elif request.method == 'POST':
+        form = SubredditForm(request.form)
+        if not form.validate():
+            return abort(400)
+
+        check_permission(subreddit)
+        subreddit = Subreddit.query.filter_by(id=subreddit_id).first()
+        subreddit.title = request.form.get('title')
+        subreddit.description = request.form.get('description')
+        db.session.add(subreddit)
+        db.session.commit()
+
+        form = PostForm(request.form)
+        return render_template('single_subreddit.html', form=form, subreddit=subreddit)
     form = PostForm(request.form)
     return render_template('single_subreddit.html', form=form, subreddit=subreddit)
 
 
-@subreddits.route('/<subreddit_id>/posts', methods=['POST'])
+@subreddits.route('/<subreddit_id>/posts', methods=['GET', 'POST'])
 @login_required
 def subreddit_posts(subreddit_id):
     subreddit = Subreddit.query.filter_by(id=subreddit_id).first()
     if subreddit is None:
         abort(404)
+
     form = PostForm(request.form)
+    if request.method == 'GET':
+        return render_template('single_subreddit.html', form=form, subreddit=subreddit)
 
     if form.validate():
         post = Post(
@@ -66,11 +84,24 @@ def subreddit_posts(subreddit_id):
     return render_template('single_subreddit.html', form=form, subreddit=subreddit)
 
 
-@subreddits.route('/<subreddit_id>/posts/<post_id>', methods=['GET', 'DELETE'])
+@subreddits.route('/<subreddit_id>/posts/<post_id>', methods=['GET', 'POST', 'DELETE'])
 @login_required
 def subreddit_post(subreddit_id, post_id):
     post = find_post(subreddit_id, post_id)
-    if request.method == 'DELETE':
+    if request.method == 'POST':
+        check_permission(post)
+        form = PostForm(request.form)
+        if not form.validate():
+            return abort(400)
+
+        post = Post.query.filter_by(id=post.id).first()
+        if post is None:
+            abort(404)
+        post.title = request.form.get('title')
+        post.content = request.form.get('content')
+        db.session.add(post)
+        db.session.commit()
+    elif request.method == 'DELETE':
         check_permission(post)
         Post.query.filter_by(id=post.id).delete()
         db.session.commit()
@@ -80,11 +111,14 @@ def subreddit_post(subreddit_id, post_id):
     return render_template('single_post.html', post=post, form=form)
 
 
-@subreddits.route('/<subreddit_id>/posts/<post_id>/comments', methods=['POST'])
+@subreddits.route('/<subreddit_id>/posts/<post_id>/comments', methods=['GET', 'POST'])
 @login_required
 def subreddit_post_comments(subreddit_id, post_id):
     post = find_post(subreddit_id, post_id)
     form = CommentForm(request.form)
+
+    if request.method == 'GET':
+        return render_template('single_post.html', post=post, form=form)
 
     if form.validate():
         comment = Comment(
@@ -97,7 +131,7 @@ def subreddit_post_comments(subreddit_id, post_id):
     return redirect(url_for('subreddits.subreddit_post', subreddit_id=subreddit_id, post_id=post_id))
 
 
-@subreddits.route('/<subreddit_id>/posts/<post_id>/comments/<comment_id>', methods=['DELETE'])
+@subreddits.route('/<subreddit_id>/posts/<post_id>/comments/<comment_id>', methods=['POST', 'DELETE'])
 @login_required
 def subreddit_post_delete_comment(subreddit_id, post_id, comment_id):
     post = find_post(subreddit_id, post_id)
@@ -105,8 +139,17 @@ def subreddit_post_delete_comment(subreddit_id, post_id, comment_id):
 
     check_permission(comment)
 
-    Comment.query.filter_by(id=comment.id).delete()
-    db.session.commit()
+    if request.method == 'DELETE':
+        Comment.query.filter_by(id=comment.id).delete()
+        db.session.commit()
+    elif request.method == 'POST':
+        form = CommentForm(request.form)
+        if not form.validate():
+            abort(400)
+        comment = Comment.query.filter_by(id=comment.id).first()
+        comment.content = request.form.get('content')
+        db.session.add(comment)
+        db.session.commit()
     return redirect(url_for('subreddits.subreddit_post', subreddit_id=subreddit_id, post_id=post_id))
 
 
