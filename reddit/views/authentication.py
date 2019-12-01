@@ -43,7 +43,7 @@ def register():
             if User.query.filter_by(email=email).first() is not None:
                 flash('The email is already taken')
                 return redirect('register')
-            user = User(name, email, password)
+            user = User(email, name, password)
             db.session.add(user)
             db.session.commit()
 
