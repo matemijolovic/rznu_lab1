@@ -7,6 +7,7 @@ from reddit.security import login_manager, bcrypt
 from reddit.views.authentication import authentication
 from reddit.views.root import root
 from reddit.views.subreddits import subreddits
+from reddit.views.posts import posts
 from .database import db
 
 
@@ -23,6 +24,7 @@ def create_app():
     app.register_blueprint(root)
     app.register_blueprint(authentication)
     app.register_blueprint(subreddits, url_prefix='/subreddits')
+    app.register_blueprint(posts, url_prefix='/posts')
 
     return app
 

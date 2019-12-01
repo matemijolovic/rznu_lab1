@@ -14,6 +14,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/subreddits">Subreddits</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/posts">Posts</a>
+                    </li>
                 {% else %}
                     <li class="nav-item">
                         <a class="nav-link" href="/login">Login</a>
@@ -22,9 +25,9 @@
                         <a class="nav-link" href="/register">Register</a>
                     </li>
                 {% endif %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="/documentation">Documentation</a>
-                    </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/documentation">Documentation</a>
+                </li>
 
             </ul>
             {% if session['username'] %}
@@ -45,11 +48,9 @@
     <div class="jumbotron" style="padding: 20px; margin-bottom: 10px">
         {% for subreddit in subreddits %}
             <h3 class="display-7">
-                <a href="/subreddits/{{ subreddit.id }}">{{ subreddit.title }}</a> (started by user {{ subreddit.user.name }})
+                <a href="/subreddits/{{ subreddit.id }}">{{ subreddit.title }}</a> (started by
+                user {{ subreddit.user.name }})
             </h3>
-{#            <form action="{{ url_for('delete_movie', movie_name=movie.name) }}" method=post>#}
-{#                <input type=submit value=Delete">#}
-{#            </form>#}
         {% endfor %}
     </div>
 {% endmacro %}
@@ -61,7 +62,8 @@
         {% else %}
             {% for post in subreddit.posts %}
                 <h3 class="display-7">
-                    <a href="/subreddits/{{ subreddit.id }}/posts/{{ post.id }}">{{ post.title }}</a> (started by user {{ post.user.name }})</h3>
+                    <a href="/subreddits/{{ subreddit.id }}/posts/{{ post.id }}">{{ post.title }}</a> (started by
+                    user {{ post.user.name }})</h3>
             {% endfor %}
         {% endif %}
     </div>
