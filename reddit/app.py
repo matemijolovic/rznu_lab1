@@ -71,6 +71,8 @@ def add_default_post_comments(user, posts):
 
 @login_manager.user_loader
 def load_user(user_id):
+    if isinstance(user_id, int):
+        return User.query.filter_by(id=user_id).first()
     return User.query.filter_by(email=user_id).first()
 
 
