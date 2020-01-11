@@ -28,7 +28,7 @@ def subreddits_root():
     return render_template('subreddits.html', form=form, subreddits=subreddits)
 
 
-@subreddits.route('/<subreddit_id>', methods=['GET', 'POST', 'DELETE'])
+@subreddits.route('/<subreddit_id>', methods=['GET', 'PUT', 'DELETE'])
 @login_required
 def subreddit(subreddit_id):
 
@@ -41,7 +41,7 @@ def subreddit(subreddit_id):
         Subreddit.query.filter_by(id=subreddit_id).delete()
         db.session.commit()
         return redirect(url_for('subreddits.subreddits_root'))
-    elif request.method == 'POST':
+    elif request.method == 'PUT':
         form = SubredditForm(request.form)
         if not form.validate():
             return abort(400)
@@ -84,11 +84,11 @@ def subreddit_posts(subreddit_id):
     return render_template('single_subreddit.html', form=form, subreddit=subreddit)
 
 
-@subreddits.route('/<subreddit_id>/posts/<post_id>', methods=['GET', 'POST', 'DELETE'])
+@subreddits.route('/<subreddit_id>/posts/<post_id>', methods=['GET', 'PUT', 'DELETE'])
 @login_required
 def subreddit_post(subreddit_id, post_id):
     post = find_post(subreddit_id, post_id)
-    if request.method == 'POST':
+    if request.method == 'PUT':
         check_permission(post)
         form = PostForm(request.form)
         if not form.validate():
@@ -131,7 +131,7 @@ def subreddit_post_comments(subreddit_id, post_id):
     return redirect(url_for('subreddits.subreddit_post', subreddit_id=subreddit_id, post_id=post_id))
 
 
-@subreddits.route('/<subreddit_id>/posts/<post_id>/comments/<comment_id>', methods=['POST', 'DELETE'])
+@subreddits.route('/<subreddit_id>/posts/<post_id>/comments/<comment_id>', methods=['PUT', 'DELETE'])
 @login_required
 def subreddit_post_delete_comment(subreddit_id, post_id, comment_id):
     post = find_post(subreddit_id, post_id)
@@ -142,7 +142,7 @@ def subreddit_post_delete_comment(subreddit_id, post_id, comment_id):
     if request.method == 'DELETE':
         Comment.query.filter_by(id=comment.id).delete()
         db.session.commit()
-    elif request.method == 'POST':
+    elif request.method == 'PUT':
         form = CommentForm(request.form)
         if not form.validate():
             abort(400)
