@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+
+{% block title %}Chat{% endblock %}
+{% block content %}
+    <div class="container">
+        <h2 class="display-4 pt-4">Messages</h2>
+
+        <div id="messageContainer" class="jumbotron" style="padding: 20px; margin-bottom: 10px">
+        </div>
+
+        <div class="row" style="padding: 10px;">
+            <div class="col-11">
+                <input type="text" id="messageInput" class="form-control">
+            </div>
+            <div class="col-1 text-right">
+                <button id="submitMessageButton" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script
+            src="https://code.jquery.com/jquery-3.4.1.slim.js"
+            integrity="sha256-BTlTdQO9/fascB1drekrDVkaKd9PkwBymMlHOiG+qLI="
+            crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+        var ws = new WebSocket("ws://localhost:8000/ws/chat");
+
+        ws.onopen = function () {
+            ws.send("{{ name }}");
+        };
+
+        ws.onclose = function (evt) {
+            console.log("socket closed");
+        };
+
+        ws.onmessage = function (evt) {
+            console.log('Received data: ' + evt.data);
+            $('#messageContainer').append(`<p> ${evt.data} </p>`);
+        };
+
+        let messageInputElement = $('#messageInput');
+        let submitMessageButton = $('#submitMessageButton');
+
+        submitMessageButton.click(() => {
+            const message = messageInputElement.val();
+            if (message.length === 0) {
+                console.log("Empty message. Ignoing...");
+                return;
+            }
+
+            ws.send(message);
+            messageInputElement.val('');
+        });
+
+        {# send message on ENTER #}
+        messageInputElement.keypress(function (e) {
+            var key = e.which;
+            if (key === 13) {
+                submitMessageButton.click();
+                return false;
+            }
+        });
+    </script>
+{% endblock %}

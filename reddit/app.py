@@ -8,7 +8,11 @@ from reddit.views.authentication import authentication
 from reddit.views.root import root
 from reddit.views.subreddits import subreddits
 from reddit.views.posts import posts
+from reddit.views.chat import chat
+from reddit.views.ws import ws
+
 from .database import db
+from .sockets import sockets
 
 
 def create_app():
@@ -19,12 +23,17 @@ def create_app():
     db.init_app(app)
     login_manager.init_app(app)
     bcrypt.init_app(app)
+    sockets.init_app(app)
 
-    # register blueprints
+    # register app blueprints
     app.register_blueprint(root)
     app.register_blueprint(authentication)
     app.register_blueprint(subreddits, url_prefix='/subreddits')
     app.register_blueprint(posts, url_prefix='/posts')
+    app.register_blueprint(chat, url_prefix='/chat')
+
+    # register ws blueprints
+    sockets.register_blueprint(ws, url_prefix='/ws')
 
     return app
 
@@ -109,5 +118,10 @@ if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
         add_default_post_comments(user, posts)
 
 
-if __name__ == '__main__':
-    app.run(debug=True, use_reloader=False)
+if __name__ == "__main__":
+    # run with embedded WSGIServer
+    from gevent import pywsgi
+    from geventwebsocket.handler import WebSocketHandler
+    print('Starting the app')
+    server = pywsgi.WSGIServer(('', 5000), app, handler_class=WebSocketHandler)
+    server.serve_forever()
