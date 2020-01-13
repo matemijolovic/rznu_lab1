@@ -25,6 +25,12 @@
             crossorigin="anonymous"></script>
 
     <script type="text/javascript">
+        const supportsWebSockets = 'WebSocket' in window || 'MozWebSocket' in window;
+        if (!supportsWebSockets) {
+            alert('Your browser does not support websockets');
+            window.location.replace("/"); // redirect to home
+        }
+
         var ws = new WebSocket("ws://localhost:8000/ws/chat");
 
         ws.onopen = function () {
