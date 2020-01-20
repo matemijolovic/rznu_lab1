@@ -43,7 +43,9 @@
 
         ws.onmessage = function (evt) {
             console.log('Received data: ' + evt.data);
-            $('#messageContainer').append(`<p> ${evt.data} </p>`);
+
+            const message = JSON.parse(evt.data);
+            $('#messageContainer').append(`<p> <div style="font-weight: bold">${message.user}:</div> ${message.text} </p>`);
         };
 
         let messageInputElement = $('#messageInput');

@@ -20,6 +20,8 @@ def chat_socket(socket):
 
     while not socket.closed:
         message = socket.receive()
+        if message is None:
+            continue
         print(f'New message by user {alias}: {message}')
         broadcast(alias, message)
 
@@ -32,6 +34,7 @@ def broadcast(user, message):
             del sessions[socket_owner]
             return
 
-        socket.send(f'{user}: {message}')
+        message_json = '{"user": "' + user + '", "text": "' + message + '"}'
+        socket.send(message_json)
 
 
