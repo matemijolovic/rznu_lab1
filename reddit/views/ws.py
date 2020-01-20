@@ -16,6 +16,10 @@ def echo_socket(socket):
 def chat_socket(socket):
 
     alias = socket.receive()
+    if alias in sessions:
+        # duplicate ID
+        raise ValueError("Duplicate alias")
+
     sessions[alias] = socket
 
     while not socket.closed:
